@@ -12,18 +12,21 @@ namespace Queue
         // Create a queue that is actually a file
         // Need to consider locking as might hsve problems reading in writing simultaniously
         // Start simple and just have it as a string queue
-        // assume that the file is stored with the class
-
-        // Try this
+        // assume that the file is stored with the dll/exe
         //
-        // 0000 - unsigned int - number of elements size
-        // 0000 - unsigned int - current element counter
-        // 0000 - unsigned int - pointer to current element
+        // Header
+        //
+        // 00 - unsigned int16 - number of elements size
+        // 00 - unsigned int16 - current element counter
+        // 00 - unsigned int16 - pointer to current element
+        //
+        // Data
+        //
         // - Depending on data type but for string
-        // 00 - unsigned int - Length of element handled by the binary writer and reader
+        // 00 - leb128 - Length of element handled by the binary writer and reader in LEB128 format
         // bytes - string
         // ...
-        // 00 - unsigned int - Length of element handled by the binary writer and reader
+        // 00 - leb128 - Length of element handled by the binary writer and reader in LEB128 format
         // bytes - string
         //
         //

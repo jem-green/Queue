@@ -36,6 +36,16 @@ namespace Queue
             Console.WriteLine(q.Dequeue());
             Console.WriteLine("count=" + q.Count);
 
+            q.Enqueue("start");
+            q.Enqueue("next");
+            q.Enqueue("end");
+            Console.WriteLine("count=" + q.Count);
+
+            foreach (string s in q)
+            {
+                Console.WriteLine("Enumerate " + s);
+            }
+
             Console.WriteLine("--------");
 
             PersistentQueue<string> pq = new PersistentQueue<string>(true);
@@ -66,6 +76,16 @@ namespace Queue
             Console.WriteLine("count=" + pq.Count);
             Console.WriteLine(pq.Dequeue());
             Console.WriteLine("count=" + pq.Count);
+
+            pq.Enqueue("start");
+            pq.Enqueue("next");
+            pq.Enqueue("end");
+            Console.WriteLine("count=" + pq.Count);
+
+            foreach (string s in pq)
+            {
+                Console.WriteLine("Enumerate " + s);
+            }
 
         }
     }

@@ -1,11 +1,13 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 
 namespace Queue
 {
-    class PersistentQueue<T>
+    class PersistentQueue<T> : IEnumerator<T>
     {
         // Create a queue that is actually a file
         // Need to consider locking as might hsve problems reading in writing simultaniously
@@ -14,8 +16,8 @@ namespace Queue
 
         // Try this
         //
-        // 0000 - unsigned int - number of elements
-        // 0000 - unsigned int - current element conter
+        // 0000 - unsigned int - number of elements size
+        // 0000 - unsigned int - current element counter
         // 0000 - unsigned int - pointer to current element
         // - Depending on data type but for string
         // 00 - unsigned int - Length of element handled by the binary writer and reader
@@ -35,6 +37,8 @@ namespace Queue
         UInt16 _size;
         UInt16 _count;
         UInt16 _pointer;
+        int _cursor;
+        private bool disposedValue;
 
         #endregion
         #region Constructors
@@ -103,6 +107,9 @@ namespace Queue
             }
         }
 
+
+
+
         #endregion
         #region Methods
 
@@ -131,7 +138,7 @@ namespace Queue
                     // Find the data
 
                     BinaryReader binaryReader = new BinaryReader(new FileStream(filenamePath, FileMode.Open));
-                    binaryReader.BaseStream.Seek(_pointer, SeekOrigin.Begin);    // Move to position of the current
+                    binaryReader.BaseStream.Seek(_pointer, SeekOrigin.Begin);    // Move to position of the current item
 
                     if (typeParameterType == typeof(string))
                     {
@@ -204,7 +211,7 @@ namespace Queue
                     if (typeParameterType == typeof(string))
                     {
                         data = binaryReader.ReadString();
-                        _pointer = Convert.ToUInt16(_pointer + 1 + data.ToString().Length);         
+                        _pointer = Convert.ToUInt16(_pointer + 1 + data.ToString().Length);
                     }
                     else
                     {
@@ -237,22 +244,110 @@ namespace Queue
             return ((T)Convert.ChangeType(data, typeof(T)));
         }
 
+
+        bool IEnumerator.MoveNext()
+        {
+            bool moved = false;
+            if (_cursor < _size)
+            {
+                moved = true;
+            }
+            return (moved);
+        }
+
+        void IEnumerator.Reset()
+        {
+            _cursor = -1;
+        }
+
+        object IEnumerator.Current
+        {
+            get
+            {
+                if ((_cursor < 0) || (_cursor == _size))
+                {
+                    throw new InvalidOperationException();
+                }
+                else
+                {
+                    return (Read(_path, _name, _cursor));
+                }
+            }
+        }
+
+        T IEnumerator<T>.Current
+        {
+            get
+            {
+                if ((_cursor < 0) || (_cursor == _size))
+                {
+                    throw new InvalidOperationException();
+                }
+                else
+                {
+                    return ((T)Convert.ChangeType(Read(_path, _name, _cursor), typeof(T)));
+                }
+            }
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            for (int cursor=_count; cursor < _size; cursor++)
+            {
+                // Return the current element and then on next function call 
+                // resume from next element rather than starting all over again;
+                yield return (Read(_path, _name, cursor));
+            }
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects)
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: set large fields to null
+                disposedValue = true;
+            }
+        }
+
+        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // ~PersistentQueue()
+        // {
+        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     Dispose(disposing: false);
+        // }
+
+        void IDisposable.Dispose()
+        {
+            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+
         #endregion
         #region Private
 
         private void Open(string path, string filename, bool reset)
         {
             string filenamePath = System.IO.Path.Combine(path, filename + ".bin");
+
             if ((File.Exists(filenamePath) == true) && (reset == false))
             {
                 BinaryReader binaryReader = new BinaryReader(new FileStream(filenamePath, FileMode.Open));
                 _size = binaryReader.ReadUInt16();
                 _count = binaryReader.ReadUInt16();
                 _pointer = binaryReader.ReadUInt16();
+                _cursor = -1;
                 binaryReader.Close();
             }
             else
             {
+                _cursor = -1;
                 File.Delete(filenamePath);
                 Reset(path, filename);
             }
@@ -274,7 +369,42 @@ namespace Queue
             binaryWriter.Close();
         }
 
-        #endregion
+        private object Read(string path, string filename, int index)
+        {
+            object data = null;
 
+            lock (_lockObject)
+            {
+                Type typeParameterType = typeof(T);
+                string filenamePath = System.IO.Path.Combine(path, filename + ".bin");
+
+                // Check 
+
+                if ((_size - _count) > 0)
+                {
+                    // Find the data
+
+                    BinaryReader binaryReader = new BinaryReader(new FileStream(filenamePath, FileMode.Open));
+                    binaryReader.BaseStream.Seek(_pointer, SeekOrigin.Begin);    // Move to position of the current
+                    for (int cursor = 0; cursor < (_size - _count); cursor++)
+                    {
+
+                        if (typeParameterType == typeof(string))
+                        {
+                            object temp = binaryReader.ReadString();
+                            if (cursor == index)
+                            {
+                                data = temp;
+                                break;
+                            }
+                        }
+                    }
+                    binaryReader.Close();
+                }
+            }
+            return (data);
+        }
+
+        #endregion
     }
 }

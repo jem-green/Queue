@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Runtime.InteropServices;
 
 namespace Queue
 {
@@ -116,6 +114,9 @@ namespace Queue
         #endregion
         #region Methods
 
+        /// <summary>
+        /// Clear the Queue
+        /// </summary>
         public void Clear()
         {
             lock (_lockObject)
@@ -124,6 +125,10 @@ namespace Queue
             }
         }
 
+        /// <summary>
+        /// Read the data from the top of the Queue
+        /// </summary>
+        /// <returns></returns>
         public T Peek()
         {
             object data;
@@ -164,6 +169,10 @@ namespace Queue
             return ((T)Convert.ChangeType(data, typeof(T)));
         }
 
+        /// <summary>
+        /// Add data to the Queue
+        /// </summary>
+        /// <param name="data"></param>
         public void Enqueue(T data)
         {
             lock (_lockObject)
@@ -191,7 +200,11 @@ namespace Queue
                 binaryWriter.Close();
             }
         }
-
+        
+        /// <summary>
+        /// Remove data to the Queue
+        /// </summary>
+        /// <returns></returns>
         public T Dequeue()
         {
             object data;

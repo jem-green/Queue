@@ -13,12 +13,14 @@ namespace Queue
         // assume that the file is stored with the dll/exe
         //
         // Header
+        // ------
         //
-        // 00 - unsigned int16 - number of elements size
-        // 00 - unsigned int16 - current element counter
-        // 00 - unsigned int16 - pointer to current element
+        // 00 - unsigned int16 - number of elements _size
+        // 00 - unsigned int16 - current element counter _count
+        // 00 - unsigned int16 - pointer to current element _pointer
         //
         // Data
+        // ----
         //
         // - Depending on data type but for string
         // 00 - leb128 - Length of element handled by the binary writer and reader in LEB128 format
@@ -30,14 +32,16 @@ namespace Queue
         //
 
 
-        #region Variables
+        #region Fields
 
         string _path = "";
         string _name = "PersistentQueue";
         readonly object _lockObject = new Object();
-        UInt16 _size;
-        UInt16 _count;
-        UInt16 _pointer;
+        UInt16 _size;                                   // number of elements
+        UInt16 _count;                                  // current element pointer
+        UInt16 _pointer;                                // pointer to the end of the queue
+        UInt16 _data = 6;                               // pointer to start of data _data
+
         int _cursor;
         private bool disposedValue;
 
@@ -146,7 +150,7 @@ namespace Queue
                     // Find the data
 
                     BinaryReader binaryReader = new BinaryReader(new FileStream(filenamePath, FileMode.Open));
-                    binaryReader.BaseStream.Seek(_pointer, SeekOrigin.Begin);    // Move to position of the current item
+                    binaryReader.BaseStream.Seek(_data + _pointer, SeekOrigin.Begin);    // Move to position of the current item
 
                     if (typeParameterType == typeof(string))
                     {
@@ -218,11 +222,10 @@ namespace Queue
 
                 if ((_size - _count) > 0)
                 {
-
                     // Find the data
 
                     BinaryReader binaryReader = new BinaryReader(new FileStream(filenamePath, FileMode.Open));
-                    binaryReader.BaseStream.Seek(_pointer, SeekOrigin.Begin);    // Move to position of the current
+                    binaryReader.BaseStream.Seek(_data + _pointer, SeekOrigin.Begin);    // Move to position of the current
 
                     if (typeParameterType == typeof(string))
                     {
@@ -241,7 +244,7 @@ namespace Queue
                     if (_count < _size)
                     {
                         BinaryWriter binaryWriter = new BinaryWriter(new FileStream(filenamePath, FileMode.OpenOrCreate));
-                        binaryWriter.Seek(2, SeekOrigin.Begin); // Move to start of the file
+                        binaryWriter.Seek(2, SeekOrigin.Begin); // Move to start of the file and skip size
                         binaryWriter.Write(_count);  // Write the new count
                         binaryWriter.Write(_pointer);  // Write the new pointer
                         binaryWriter.Close();
@@ -377,10 +380,10 @@ namespace Queue
             binaryWriter.Seek(0, SeekOrigin.Begin); // Move to start of the file
             _size = 0;
             _count = 0;
-            _pointer = 6;   // Start of the data
-            binaryWriter.Write(_size);  // Write the new size
-            binaryWriter.Write(_count);  // Write the new count
-            binaryWriter.Write(_pointer);  // Write the new pointer
+            _pointer = 0;                   // Start of the data
+            binaryWriter.Write(_size);      // Write the new size
+            binaryWriter.Write(_count);     // Write the new count
+            binaryWriter.Write(_pointer);   // Write the new pointer
             binaryWriter.BaseStream.SetLength(6);
             binaryWriter.Close();
         }
@@ -401,7 +404,7 @@ namespace Queue
                     // Find the data
 
                     BinaryReader binaryReader = new BinaryReader(new FileStream(filenamePath, FileMode.Open));
-                    binaryReader.BaseStream.Seek(_pointer, SeekOrigin.Begin);    // Move to position of the current
+                    binaryReader.BaseStream.Seek(_data + _pointer, SeekOrigin.Begin);    // Move to position of the current
                     for (int cursor = 0; cursor < (_size - _count); cursor++)
                     {
 

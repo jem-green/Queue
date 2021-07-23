@@ -40,7 +40,7 @@ namespace Queue
         UInt16 _size;                                   // number of elements
         UInt16 _count;                                  // current element pointer
         UInt16 _pointer;                                // pointer to the end of the queue
-        UInt16 _data = 6;                               // pointer to start of data _data
+        UInt16 _data = 6;                               // pointer to start of data
 
         int _cursor;
         private bool disposedValue;

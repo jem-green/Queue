@@ -10,40 +10,53 @@ namespace Queue
             Queue<string> q = new Queue<string>();
 
             Console.WriteLine("count=" + q.Count);
-
-            q.Enqueue("start");
-            q.Enqueue("next");
-            q.Enqueue("end");
+            string s;
+            s = "start";
+            q.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
+            s = "next";
+            q.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
+            s = "end";
+            q.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
             Console.WriteLine("count=" + q.Count);
 
-            Console.WriteLine(q.Peek());
-            Console.WriteLine(q.Dequeue());
-            Console.WriteLine(q.Dequeue());
-            Console.WriteLine(q.Dequeue());
+            Console.WriteLine("Start=" + q.Peek());
+            Console.WriteLine("Dequeue=" + q.Dequeue());
+            Console.WriteLine("Dequeue=" + q.Dequeue());
+            Console.WriteLine("Dequeue=" + q.Dequeue());
             Console.WriteLine("count=" + q.Count);
 
             try
             {
-                q.Dequeue();
+                Console.WriteLine(q.Dequeue());
             }
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
             }
 
-            q.Enqueue("newstart");
+            s = "newstart";
+            q.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
             Console.WriteLine("count=" + q.Count);
-            Console.WriteLine(q.Dequeue());
-            Console.WriteLine("count=" + q.Count);
-
-            q.Enqueue("start");
-            q.Enqueue("next");
-            q.Enqueue("end");
+            Console.WriteLine("Dequeue=" + q.Dequeue());
             Console.WriteLine("count=" + q.Count);
 
-            foreach (string s in q)
+            s = "start";
+            q.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
+            s = "next";
+            q.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
+            s = "end";
+            q.Enqueue(s);
+            Console.WriteLine("count=" + q.Count);
+
+            foreach (string st in q)
             {
-                Console.WriteLine("Enumerate " + s);
+                Console.WriteLine("Enumerate=" + st);
             }
 
             Console.WriteLine("--------");
@@ -51,16 +64,21 @@ namespace Queue
             PersistentQueue<string> pq = new PersistentQueue<string>(true);
 
             Console.WriteLine("count=" + pq.Count);
-
-            pq.Enqueue("start");
-            pq.Enqueue("next");
-            pq.Enqueue("end");
+            s = "start";
+            pq.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
+            s = "next";
+            pq.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
+            s = "end";
+            pq.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
             Console.WriteLine("count=" + pq.Count);
 
-            Console.WriteLine(pq.Peek());
-            Console.WriteLine(pq.Dequeue());
-            Console.WriteLine(pq.Dequeue());
-            Console.WriteLine(pq.Dequeue());
+            Console.WriteLine("Start=" + pq.Peek());
+            Console.WriteLine("Dequeue=" + pq.Dequeue());
+            Console.WriteLine("Dequeue=" + pq.Dequeue());
+            Console.WriteLine("Dequeue=" + pq.Dequeue());
             Console.WriteLine("count=" + pq.Count);
 
             try
@@ -72,19 +90,26 @@ namespace Queue
                 Console.WriteLine(e.Message);
             }
 
-            pq.Enqueue("newstart");
+            s = "newstart";
+            pq.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
             Console.WriteLine("count=" + pq.Count);
-            Console.WriteLine(pq.Dequeue());
-            Console.WriteLine("count=" + pq.Count);
-
-            pq.Enqueue("start");
-            pq.Enqueue("next");
-            pq.Enqueue("end");
+            Console.WriteLine("Dequeue=" + pq.Dequeue());
             Console.WriteLine("count=" + pq.Count);
 
-            foreach (string s in pq)
+            s = "start";
+            pq.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
+            s = "next";
+            pq.Enqueue(s);
+            Console.WriteLine("Enqueue=" + s);
+            s = "end";
+            pq.Enqueue(s);
+            Console.WriteLine("count=" + pq.Count);
+
+            foreach (string st in pq)
             {
-                Console.WriteLine("Enumerate " + s);
+                Console.WriteLine("Enumerate=" + st);
             }
 
         }

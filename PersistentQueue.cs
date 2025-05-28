@@ -8,7 +8,7 @@ namespace Queue
     class PersistentQueue<T> : IEnumerator<T>
     {
         // Create a queue that is actually a file
-        // Need to consider locking as might hsve problems reading in writing simultaniously
+        // Need to consider locking as might have problems reading in writing simultaneously
         // Start simple and just have it as a string queue
         // assume that the file is stored with the dll/exe
         //
@@ -78,7 +78,7 @@ namespace Queue
         }
 
         #endregion
-        #region Proprties
+        #region Properties
 
         public int Count
         {
@@ -328,22 +328,22 @@ namespace Queue
                     // TODO: dispose managed state (managed objects)
                 }
 
-                // TODO: free unmanaged resources (unmanaged objects) and override finalizer
+                // TODO: free unmanaged resources (unmanaged objects) and override finalize
                 // TODO: set large fields to null
                 disposedValue = true;
             }
         }
 
-        // // TODO: override finalizer only if 'Dispose(bool disposing)' has code to free unmanaged resources
+        // // TODO: override finalize only if 'Dispose(bool disposing)' has code to free unmanaged resources
         // ~PersistentQueue()
         // {
-        //     // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        //     // Do not change this code. Put clean up code in 'Dispose(bool disposing)' method
         //     Dispose(disposing: false);
         // }
 
         void IDisposable.Dispose()
         {
-            // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+            // Do not change this code. Put clean-up code in 'Dispose(bool disposing)' method
             Dispose(disposing: true);
             GC.SuppressFinalize(this);
         }
